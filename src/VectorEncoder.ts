@@ -167,9 +167,6 @@ export default class VectorEncoder {
     if (styleFunction) {
       styleData = styleFunction(feature, resolution) as null | Style | Style[];
     }
-    if (feature.getGeometry().getType() === 'Circle') {
-      feature = this.featureCircleAsPolygon(feature as Feature<Circle>);
-    }
     const origGeojsonFeature = this.geojsonFormat.writeFeatureObject(feature);
 
     let styles = styleData !== null && !Array.isArray(styleData) ? [styleData] : (styleData as Style[]);
@@ -186,6 +183,13 @@ export default class VectorEncoder {
       // FIXME: the return of the function is very complicate and would require
       // handling more cases than we actually do
       let geometry: any = style.getGeometry();
+      // Fallback to the feature geometry if style doesn't give one.
+      if (geometry === null) {
+          geometry = feature.getGeometry();
+      }
+      if (geometry.getType() === "Circle") {
+        geometry = this.featureCircleAsPolygon(feature as Feature<Circle>).getGeometry();
+      }
       let geojsonFeature;
       // In some cases, the geometries are objects, in other cases they're functions.
       // we need to ensure we're handling functions, wether they return an object or not.
@@ -200,7 +204,6 @@ export default class VectorEncoder {
         geojsonFeatures.push(geojsonFeature);
       } else {
         geojsonFeature = origGeojsonFeature;
-        geometry = feature.getGeometry();
         // no need to encode features with no geometry
         if (!geometry) {
           return;

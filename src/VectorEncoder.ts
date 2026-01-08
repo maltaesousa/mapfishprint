@@ -188,7 +188,7 @@ export default class VectorEncoder {
           geometry = feature.getGeometry();
       }
       if (geometry.getType() === "Circle") {
-        geometry = this.featureCircleAsPolygon(feature as Feature<Circle>).getGeometry();
+        geometry = fromCircle((feature as Feature<Circle>).getGeometry(), Constants.CIRCLE_TO_POLYGON_SIDES);
       }
       let geojsonFeature;
       // In some cases, the geometries are objects, in other cases they're functions.

@@ -167,6 +167,11 @@ export default class VectorEncoder {
     if (styleFunction) {
       styleData = styleFunction(feature, resolution) as null | Style | Style[];
     }
+
+    const featureGeometry = feature.getGeometry();
+    if (featureGeometry.getType() === "Circle") {
+      feature.setGeometry(fromCircle(featureGeometry as Circle, Constants.CIRCLE_TO_POLYGON_SIDES));
+    }
     const origGeojsonFeature = this.geojsonFormat.writeFeatureObject(feature);
 
     let styles = styleData !== null && !Array.isArray(styleData) ? [styleData] : (styleData as Style[]);
@@ -185,18 +190,21 @@ export default class VectorEncoder {
       let geometry: any = style.getGeometry();
       // Fallback to the feature geometry if style doesn't give one.
       if (geometry === null) {
-          geometry = feature.getGeometry();
+        geometry = featureGeometry;
       }
-      if (geometry.getType() === "Circle") {
-        geometry = fromCircle((feature as Feature<Circle>).getGeometry(), Constants.CIRCLE_TO_POLYGON_SIDES);
-      }
-      let geojsonFeature;
       // In some cases, the geometries are objects, in other cases they're functions.
       // we need to ensure we're handling functions, wether they return an object or not.
       if (typeof geometry === 'function') {
         geometry = geometry(feature);
       }
-      if (geometry && typeof geometry === 'object') {
+      // no need to encode features with no geometry
+      if (!geometry) return;
+
+      if (geometry.getType() === "Circle") {
+        geometry = fromCircle(geometry as Circle, Constants.CIRCLE_TO_POLYGON_SIDES);
+      }
+      let geojsonFeature;
+      if (typeof geometry === 'object') {
         // note that (typeof null === 'object')
         const styledFeature = feature.clone();
         styledFeature.setGeometry(geometry);
@@ -204,10 +212,6 @@ export default class VectorEncoder {
         geojsonFeatures.push(geojsonFeature);
       } else {
         geojsonFeature = origGeojsonFeature;
-        // no need to encode features with no geometry
-        if (!geometry) {
-          return;
-        }
         if (!this.customizer_.geometryFilter(geometry)) {
           return;
         }

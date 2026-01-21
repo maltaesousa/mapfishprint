@@ -325,7 +325,7 @@ test('Vector features', async (t) => {
   });
 });
 
-test('MFPVectorEncoder can encode a circle with a circel in its style.geometry', async (t) => {
+test('MFPVectorEncoder can encode a circle with a circle in its style.geometry', async (t) => {
   const geomStyleFn = () => {
     return new Style({
       geometry: fCircle.getGeometry(),

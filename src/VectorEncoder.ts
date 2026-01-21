@@ -601,15 +601,4 @@ export default class VectorEncoder {
       symbolizers.push(symbolizer);
     }
   }
-
-  /**
-   * Converts a circle feature to a N sides polygon feature.
-   * Sides are defined in Constants.CIRCLE_TO_POLYGON_SIDES.
-   */
-  protected featureCircleAsPolygon(feature: Feature<Circle>) {
-    return new Feature({
-      ...feature.getProperties(),
-      geometry: fromCircle(feature.getGeometry(), Constants.CIRCLE_TO_POLYGON_SIDES),
-    });
-  }
 }

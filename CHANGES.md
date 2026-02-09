@@ -1,6 +1,6 @@
 # @geoblocks/mapfishprint changes
 
-## 0.2.23
+## 1.0.0
 
 - Resolve a bug where a style with its own geometry as a Circle was transformed into a GeometryCollection resulting in an error
 

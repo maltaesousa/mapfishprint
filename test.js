@@ -330,7 +330,7 @@ test('MFPVectorEncoder can encode a circle with a circle in its style.geometry',
     return new Style({
       geometry: fCircle.getGeometry(),
       fill,
-      stroke
+      stroke,
     });
   };
   fCircle.setStyle(geomStyleFn);
@@ -341,7 +341,9 @@ test('MFPVectorEncoder can encode a circle with a circle in its style.geometry',
   });
   const customizer = new BaseCustomizer();
   const resolution = 1.0583354500042335;
-  const encodedSpecialLayer = new MFPVectorEncoder(vectorLayer.getLayerState(), customizer).encodeVectorLayer(resolution);
+  const encodedSpecialLayer = new MFPVectorEncoder(vectorLayer.getLayerState(), customizer).encodeVectorLayer(
+    resolution,
+  );
 
   assert.deepEqual(encodedSpecialLayer.geoJson.features[0], {
     type: 'Feature',

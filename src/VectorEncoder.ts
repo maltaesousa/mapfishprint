@@ -169,7 +169,10 @@ export default class VectorEncoder {
     }
 
     const featureGeometry = feature.getGeometry();
-    if (featureGeometry.getType() === "Circle") {
+    if (featureGeometry.getType() === 'Circle') {
+      const featureId = feature.getId();
+      feature = feature.clone();
+      feature.setId(featureId);
       feature.setGeometry(fromCircle(featureGeometry as Circle, Constants.CIRCLE_TO_POLYGON_SIDES));
     }
     const origGeojsonFeature = this.geojsonFormat.writeFeatureObject(feature);
@@ -200,7 +203,7 @@ export default class VectorEncoder {
       // no need to encode features with no geometry
       if (!geometry) return;
 
-      if (geometry.getType() === "Circle") {
+      if (geometry.getType() === 'Circle') {
         geometry = fromCircle(geometry as Circle, Constants.CIRCLE_TO_POLYGON_SIDES);
       }
       let geojsonFeature;
